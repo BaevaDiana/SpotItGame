@@ -24,7 +24,7 @@ def rotate_and_save_all_images(input_folder, output_folder, num_rotations):
 
 # Пример использования
 input_folder = "dataset_cards"
-output_folder = "dataset2"
+output_folder = "dataset"
 num_rotations = 6
 
 rotate_and_save_all_images(input_folder, output_folder, num_rotations)
