@@ -6,13 +6,13 @@ from os.path import join
 
 class Image:
     def __init__(self, path_to_img):
-        '''Uses path to image to process an image.
+        '''Инициализация объекта Image.
 
-        :param path_to_img: path to the image
+        :param path_to_img: путь к изображению
 
-        :ivar path: path to the image
-        :ivar image_name: name of image without directories (with extension) 
-        :ivar image: raw image to use for processing'''
+        :ivar path: путь к изображению
+        :ivar image_name: имя изображения без пути и расширения
+        :ivar image: исходное изображение'''
 
         self.path = path_to_img
         self.image_name = self._image_name()
@@ -24,19 +24,19 @@ class Image:
         self.cntsy = []
         self.predictions = dict()
 
-    # instance methods
+    # возвращаем имя картинки
     def _image_name(self):
         whole = self.path.split('\\')[-1]
         return whole
-
+    #имя картинки и расширения
     def _image_name_ext(self):
         wo_extension, extension = self.image_name.split('.')[0], self.image_name.split('.')[1]
         extension = f'.{extension}'
         return wo_extension, extension
-
+    #прочитать картинку
     def _read_image(self):
         return cv2.imread(self.path)
-
+    #сохранить картинку
     def save_image(self, directory, image, addition=''):
         '''Save image in specified directory
         
@@ -44,12 +44,12 @@ class Image:
         :param image: image you want to save'''
 
         cv2.imwrite(join(directory, f'{self.wo_extension}{addition}{self.extension}'), image)
-
+    #обработка
     def contrast_resized_blurred(self):
         '''Apply contrast, resize and blur to the original image'''
         return Image.combine(self.image)
 
-    # static methods
+    # добавить контраст
     def add_contrast(image):
         '''Add contrast to an image
         
@@ -61,7 +61,7 @@ class Image:
         cl = clahe.apply(l)
         limg = cv2.merge((cl,a,b))
         return cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-
+    #изменить размер
     def resize_image(image, size=(800, 800)):
         '''Resize image
         
@@ -69,7 +69,7 @@ class Image:
         :param size: tuple with new size
         :return: resized image'''
         return cv2.resize(image, size)
-
+    #размытие картинки
     def blur_image(image):
         '''Blur image
         
@@ -85,20 +85,20 @@ class Image:
         if blur:
             img = Image.blur_image(img)
         return img 
-
+    #отобразить картинку
     def show_image(image):
         plt.imshow(image)
         plt.show()
-
+    #сделать картинку серой
     def gray_image(image):
         return cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
+    #из bgr  в rgb
     def convert_color(image, toRGB=True):
         return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
+     #пороговая бинаризация
     def thresh_image(image, threshold=190):
         return cv2.threshold(image, threshold, 255, cv2.THRESH_BINARY)[1]
-
+    #находим контуры символы
     def grab_contours_by_area(image, original=True, threshold=190, reverse=False, all=False, area=1000):
         '''Grab contours from image
         
@@ -123,7 +123,7 @@ class Image:
         if area:
             cnts = [c for c in cnts if cv2.contourArea(c) > area]
         return sorted(cnts, key=cv2.contourArea, reverse=True)
-
+    #рисуем контуры
     def draw_contour(image, cnt, rect=False):
         '''Draw contour on image
         
@@ -138,17 +138,17 @@ class Image:
         else:
             contour_image = cv2.drawContours(image, [cnt], -1, (255, 0, 0), 3)
         return contour_image
-
+#добавить текст к картинке
     def add_text(image, text, x=10, y=10, font=cv2.FONT_HERSHEY_SIMPLEX, thickness=2):
         return cv2.putText(image, text, (x,y), fontFace=font, fontScale=1, color=(255,0,0), thickness=thickness)
-
+    #сохраняем необх область изображения
     def keep_contour(image, cnt):
         gray = Image.gray_image(image)
         mask = np.zeros(gray.shape, np.uint8)
         mask = cv2.drawContours(mask, [cnt], -1, 255, cv2.FILLED)
         output = image.copy()
         return cv2.bitwise_and(output, output, mask=mask)
-
+    #находим контуры с белым фоном
     def keep_contour_with_white_background(image, cnt):
         gray = Image.gray_image(image)
         mask = np.zeros(gray.shape, np.uint8)
@@ -159,11 +159,11 @@ class Image:
         bk_masked = cv2.bitwise_and(bk, bk, mask=mask)
         mask = cv2.bitwise_not(mask)
         return cv2.bitwise_or(fg_masked, bk_masked)
-
+#прямоугольник вокруг контура
     def get_rect_coordinates_around_contour(cnt):
         x,y,w,h = cv2.boundingRect(cnt)
         return x,y,w,h
-
+#площадь
     def bounding_square_around_contour(cnt):
         x,y,w,h = Image.get_rect_coordinates_around_contour(cnt)
         # create squares io rects
@@ -177,14 +177,14 @@ class Image:
 
     def take_out_roi(image, x, y, w, h):
         return image[y:y+h, x:x+w]
-
+#склеить 2 картинки
     def add_2_images(image1, image2, hor=True):
         if hor:
             img = np.concatenate((image1, image2), axis=1)
         else:
             img = np.concatenate((image1, image2), axis=0)
         return img
-
+#сохранить
     def save_image_(directory, image, name, addition=''):
         '''Save image in specified directory
         

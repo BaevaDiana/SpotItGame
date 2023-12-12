@@ -3,7 +3,7 @@ from keras import layers
 from keras import models
 from keras import optimizers
 from keras.preprocessing.image import ImageDataGenerator
-import matplotlib.pyplot as plt
+
 # layers, activation layer with 57 nodes (one for every symbol)
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(400, 400, 3)))
