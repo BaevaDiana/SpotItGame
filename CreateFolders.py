@@ -10,4 +10,4 @@ icons = ['hammer', 'lightning', 'fire', 'ghost', 'key', 'cat', 'icecube', 'snowf
 
 
 for name in icons:
-    os.mkdir(os.path.join('icons/', str(name)))
+    os.mkdir(os.path.join('symbols/validation', str(name)))
