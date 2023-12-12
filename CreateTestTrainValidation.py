@@ -4,7 +4,7 @@ from os.path import isfile, join
 import random
 import shutil
 
-original_dir = 'icons/nobluricons'
+original_dir = 'symbols'
 train = join(original_dir, 'train')
 test = join(original_dir, 'test')
 val = join(original_dir, 'validation')

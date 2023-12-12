@@ -72,7 +72,6 @@ def process_and_save_images(input_folder, output_folder):
 
                     roi = finalcont[y:y + h, x:x + w]
 
-                    # Проверка наличия изображения и ненулевых размеров
                     if not roi.size == 0 and roi.shape[0] > 0 and roi.shape[1] > 0:
                         roi = cv2.resize(roi, (400, 400))
 
