@@ -99,7 +99,7 @@ class Image:
     def thresh_image(image, threshold=190):
         return cv2.threshold(image, threshold, 255, cv2.THRESH_BINARY)[1]
 
-    def grab_contours_by_area(image, original=True, threshold=190, reverse=False, all=False, area=False):
+    def grab_contours_by_area(image, original=True, threshold=190, reverse=False, all=False, area=1000):
         '''Grab contours from image
         
         :param image: image to grab contours from
