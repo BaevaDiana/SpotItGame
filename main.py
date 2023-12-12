@@ -13,6 +13,7 @@ start = time.perf_counter()
 gif = True
 remove = False
 
+number_combinations = 1428
 # Загрузка модели CNN
 model = load_cnn_model()
 
@@ -172,4 +173,6 @@ if remove:
 end = time.perf_counter()
 totaltime = end - start
 
+
+print("Среднее время на поиск одной комбинаций (из двух карточек):", totaltime/number_combinations, 'секунд!')
 print(f'Компьютер собрал все комбинации за {totaltime} сек!А ты?')
