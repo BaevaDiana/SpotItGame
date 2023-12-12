@@ -15,6 +15,7 @@ start = time.perf_counter()
 gif = True
 remove = False
 
+number_combinations = 1428
 # load CNN model
 model = load_cnn_model()
 
@@ -52,6 +53,13 @@ for img in images:
         img.icon = Image.keep_contour_with_white_background(img.card, c)
         x, y, w, h = Image.bounding_square_around_contour(c)
         img.roi = Image.take_out_roi(img.icon, x, y, w, h)
+        if not img.roi.size == 0:
+            img.roi = Image.resize_image(img.roi, (400, 400))
+            img.save_image(f'test/predict{nr}/predict', img.roi, addition=f'_{i}')
+        else:
+            img.roi = Image.resize_image(img.card, (400, 400))
+            img.save_image(f'test/predict{nr}/predict', img.roi, addition=f'_{i}')
+
 
         # plt.imshow(cv2.cvtColor(img.roi, cv2.COLOR_BGR2RGB))
         # plt.show()
@@ -70,6 +78,16 @@ for img in images:
     img.predicted_labels = indices_to_labels(img.predicted_class_indices)
     for i in range(len(img.predicted_labels)):
         img.predictions[img.predicted_labels[i]] = i
+
+
+    for i in range(len(img.cnts_images)):
+        if i < len(img.predicted_probabilities):
+            probability = '%.2f' % img.predicted_probabilities[i]
+            text = f'{img.predicted_labels[i].capitalize()}: {probability}'
+            img.cnts_images[i] = Image.add_text(img.cnts_images[i], text, x=img.cntsx[i] - 20, y=img.cntsy[i] - 10)
+            img.save_image(directory=f'test/predict{nr}', image=img.cnts_images[i], addition=f'_{i}')
+        else:
+            print(f"Индекс {i} находится за пределами допустимого диапазона.")
 
     print(len(img.cnts_images))
     for i in range(min(len(img.cnts_images), len(img.predicted_probabilities))):
@@ -127,6 +145,7 @@ for combo in itertools.combinations(images, 2):
         found = Image.add_text(found, text, x=600, y=50, thickness=4)
         Image.save_image_(directory='predicted', image=found, name=f'01_{found_name}')
 
+
 if remove:
     for img in images:
         shutil.rmtree(img.preddir)
@@ -134,4 +153,5 @@ if remove:
 end = time.perf_counter()
 totaltime = end - start
 
-print(f'To find all the Spot it! combinations took the computer {totaltime} seconds!')
+print(f'На поиск всех the Spot it! комбинаций компьютер тратит {totaltime} секунд!')
+print("Среднее время на поиск одной комбинаций (из двух карточек):", totaltime/number_combinations, 'секунд!')
