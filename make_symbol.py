@@ -1,6 +1,5 @@
 import cv2
 import imutils
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 
@@ -37,7 +36,6 @@ def process_and_save_images(input_folder, output_folder):
                     bk_masked = cv2.bitwise_and(bk, bk, mask=mask)
                     finalcont = cv2.bitwise_or(fg_masked, bk_masked)
 
-                    output = finalcont.copy()
                     x, y, w, h = cv2.boundingRect(c)
 
                     if w < h:

@@ -2,10 +2,14 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 
+#загружаем модель
 def load_cnn_model():
     return load_model('models/model.h5')
 
+#предсказываем символ
 def get_predictions(directory, model):
+    # создание тестового генератора
+    test_dir = 'symbols/test'
     test_datagen = ImageDataGenerator(rescale=1./255)
     test_generator = test_datagen.flow_from_directory(directory,target_size=(400, 400),batch_size=20,class_mode='binary',shuffle=False)
     test_generator.reset()

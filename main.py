@@ -38,17 +38,30 @@ for img in images:
     cnt = Image.grab_contours_by_area(img.processed)[0]
     img.card = Image.keep_contour_with_white_background(img.processed, cnt)
     # Нахождение 10 самых больших контуров, как минимум, для восьми иконок на карте
-    img.cnts = Image.grab_contours_by_area(img.card, reverse=True, threshold=190, area=900)
+    img.cnts = Image.grab_contours_by_area(img.card, reverse=True, threshold=190, area=900)[:10]
 
     i = 0
     for c in img.cnts:
+        # Извлечение прямоугольных координат вокруг контура 'c'
         x, y, w, h = Image.get_rect_coordinates_around_contour(c)
+
+        # Добавление координат (x, y) контура в списки img.cntsx и img.cntsy
         img.cntsx.append(x)
         img.cntsy.append(y)
+
+        # Нанесение контура 'c' на копию обработанного изображения и сохранение результата в img.drawncontour
         img.drawncontour = Image.draw_contour(img.processed.copy(), c)
+
+        # Добавление изображения с нарисованным контуром в список img.cnts_images
         img.cnts_images.append(img.drawncontour)
+
+        # Извлечение контура 'c' и сохранение его на белом фоне из исходного изображения 'img.card'
         img.icon = Image.keep_contour_with_white_background(img.card, c)
+
+        # Получение координат ограничивающего квадрата вокруг контура 'c'
         x, y, w, h = Image.bounding_square_around_contour(c)
+
+        # Извлечение Области Интереса (ROI) из изображения значка с использованием координат ограничивающего квадрата
         img.roi = Image.take_out_roi(img.icon, x, y, w, h)
 
         if not img.roi.size == 0 and img.roi.shape[0] > 0 and img.roi.shape[1] > 0:
