@@ -19,12 +19,6 @@ class NeuralNetworkApp:
         self.root.title("Neural Network App")
         self.root.geometry("1200x600")
 
-        # self.start_button = tk.Button(root, text="Сгенерировать", command=self.find_image)
-        # self.start_button.pack(pady=10)
-        #
-        # self.start_button = tk.Button(root, text="Начать игру", command=self.start_neural_network)
-        # self.start_button.pack(pady=10)
-
         style = ttk.Style()
         style.configure("TButton", font=("Helvetica", 12), foreground="black", background="#4CAF50", padding=10)
 
@@ -57,6 +51,10 @@ class NeuralNetworkApp:
         if len(images) < 2:
             print("Недостаточно изображений в папке.")
             return
+
+        self.result_image_label.configure(image="")
+        self.result_image_label.image = ""
+        self.result_label.config(text=f'')
 
         random_images = random.sample(images, 2)
         file_path1 = os.path.join(directory, random_images[0])
