@@ -7,7 +7,7 @@ from computervision.utils import *
 from computervision.kerasutils import *
 from computervision.imageioutils import *
 from PIL import Image as PILImage, ImageTk
-
+from tkinter import ttk
 import shutil
 import itertools
 
@@ -17,12 +17,23 @@ class NeuralNetworkApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Neural Network App")
+        self.root.geometry("1200x600")
 
-        self.start_button = tk.Button(root, text="Сгенерировать", command=self.find_image)
-        self.start_button.pack(pady=10)
+        # self.start_button = tk.Button(root, text="Сгенерировать", command=self.find_image)
+        # self.start_button.pack(pady=10)
+        #
+        # self.start_button = tk.Button(root, text="Начать игру", command=self.start_neural_network)
+        # self.start_button.pack(pady=10)
 
-        self.start_button = tk.Button(root, text="Начать игру", command=self.start_neural_network)
-        self.start_button.pack(pady=10)
+        style = ttk.Style()
+        style.configure("TButton", font=("Helvetica", 12), foreground="black", background="#4CAF50", padding=10)
+
+        self.start_button_generate = ttk.Button(root, text="Сгенерировать", command=self.find_image, style="TButton")
+        self.start_button_generate.pack(pady=10)
+
+        self.start_button_start = ttk.Button(root, text="Начать игру", command=self.start_neural_network,
+                                             style="TButton")
+        self.start_button_start.pack(pady=10)
 
         self.image_label1 = tk.Label(root)
         self.image_label1.pack(side=tk.LEFT, padx=10)
@@ -31,10 +42,11 @@ class NeuralNetworkApp:
         self.image_label2.pack(side=tk.LEFT, padx=10)
 
         self.result_image_label = tk.Label(root)
-        self.result_image_label.pack(side=tk.BOTTOM, pady=10)
+        self.result_image_label.pack(padx=20,pady=50)
 
-        self.result_label = tk.Label(root, text="")
-        self.result_label.pack(pady=10)
+        self.result_label = tk.Label(root, text="",font=("Helvetica", 16, "bold"))
+        self.result_label.place(x=800,y=100)
+
         self.images = []
         self.nr=0
 
@@ -54,13 +66,13 @@ class NeuralNetworkApp:
 
         # Отображение изображений в интерфейсе
         image1 = PILImage.open(file_path1)
-        image1 = image1.resize((200, 200))  # Изменение размера изображения
+        image1 = image1.resize((300, 400))  # Изменение размера изображения
         image1 = ImageTk.PhotoImage(image1)
         self.image_label1.configure(image=image1)
         self.image_label1.image = image1
 
         image2 = PILImage.open(file_path2)
-        image2 = image2.resize((200, 200))  # Изменение размера изображения
+        image2 = image2.resize((300, 400))  # Изменение размера изображения
         image2 = ImageTk.PhotoImage(image2)
 
         self.image_label2.configure(image=image2)
@@ -192,6 +204,8 @@ class NeuralNetworkApp:
             if len(common_icon) == 1:
                 # Формирование текста с результатом
                 text = f'The common icon is: {common_icon[0].capitalize()}!'
+
+                self.result_label.config(text=f'Я нашла: {common_icon[0].capitalize()}! А ты?')
                 print(text)
                 # Добавление изображений с выделенными символами для каждого изображения в паре
                 for img in combo:
@@ -212,9 +226,10 @@ class NeuralNetworkApp:
                 found = Image.add_2_images(add_images[0], add_images[1])
                 found = Image.add_text(found, text, x=600, y=50, thickness=4)
 
-                found = PILImage.fromarray(found)
+                found = PILImage.fromarray(found[..., ::-1])
 
-                found = found.resize((200, 200))
+                #ширина высота
+                found = found.resize((500, 400))
                 # Convert PIL Image to PhotoImage
                 found_tk = ImageTk.PhotoImage(found)
 
@@ -224,7 +239,7 @@ class NeuralNetworkApp:
                 self.result_image_label.image = found_tk
 
                 # Сохранение объединенного изображения
-                Image.save_image_(directory='predictedG', image=found, name=f'{common_icon[0]}{found_name}')
+                # Image.save_image_(directory='predictedG', image=found, name=f'{common_icon[0]}{found_name}')
 
             else:
                 # Если не найдено общих меток, создаем изображение с сообщением "Не найдены иконки :("
@@ -244,8 +259,16 @@ class NeuralNetworkApp:
                 # Путь к итоговому изображению
 
         if remove:
-            for img in self.images:
-                shutil.rmtree(img.preddir)
+            test_folder_path = 'test'
+            for file_name in os.listdir(test_folder_path):
+                file_path = os.path.join(test_folder_path, file_name)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print(f"Failed to delete {file_path}: {e}")
 
 
 if __name__ == "__main__":
